@@ -1,5 +1,11 @@
 const map = L.map('map');
 const tileURL = 'https://maps.wikimedia.org/osm-intl/{z}/{x}/{y}.png';
+let marker = {}
+const form = document.querySelector("#form");
+form.addEventListener("submit", (e) => {
+  e.preventDefault();
+})
+
 
 // enable location to browser
 map.locate({ enableHighAccuracy: true});
@@ -22,7 +28,11 @@ function locationOn(e){
 
 function onMapClick(e){
   const coords = [e.latlng.lat, e.latlng.lng];
-  L.marker(coords).addTo(map)
-    .bindPopup('¡You select this place!')
-    .openPopup();
+
+  if(marker != undefined) {
+    map.removeLayer(marker);
+  }
+  marker = L.marker(coords).addTo(map)
+            .bindPopup('¡You select this place!')
+            .openPopup();
 }
