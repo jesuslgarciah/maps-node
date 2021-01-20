@@ -1,0 +1,19 @@
+name: Deploy Maps App
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+          heroku_app_name: "maps_app" #Must be unique in Heroku
+          heroku_email: "jelegaho@gmail.com"
