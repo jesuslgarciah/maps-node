@@ -9,5 +9,5 @@ html
       input(type="text" id="coordEnd" required)
       input(type="submit")
     div(id="map")
-    script(src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js")
+    script(defer src=`https://maps.googleapis.com/maps/api/js?key=${API_KEY}&callback=initMap`)
     script(src="/js/script.js")
