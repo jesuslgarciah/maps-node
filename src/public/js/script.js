@@ -1,38 +1,68 @@
-const map = L.map('map');
-const tileURL = 'https://maps.wikimedia.org/osm-intl/{z}/{x}/{y}.png';
-let marker = {}
-const form = document.querySelector("#form");
-form.addEventListener("submit", (e) => {
-  e.preventDefault();
-})
+let directionsService;
+let directionsRenderer;
+let originPlaceId = "";
+let destinationPlaceId = "";
 
+function initMap() {
+  directionsService = new google.maps.DirectionsService();
+  directionsRenderer = new google.maps.DirectionsRenderer();
 
-// enable location to browser
-map.locate({ enableHighAccuracy: true});
+  const coords = {
+    lat: 4.673,
+    lng:  -74.14
+  };
 
-// event location found
-map.on('locationfound', locationOn)
+  const map = new google.maps.Map(document.getElementById("map"), {
+    center: coords,
+    zoom: 10,
+  });
 
-//event click on map
-map.on('click', onMapClick)
-// set tile to map
-L.tileLayer(tileURL).addTo(map);
+  directionsRenderer.setMap(map);
 
-function locationOn(e){
-  const coords = [e.latlng.lat, e.latlng.lng];
-  map.setView(coords, 14)
-  L.marker(coords).addTo(map)
-    .bindPopup('¡You are here!')
-    .openPopup();
+  const originInput = document.getElementById("origin-input");
+  const originAutocomplete = new google.maps.places.Autocomplete(originInput);
+
+  const destinationInput = document.getElementById("destination-input");
+  const destinationAutocomplete = new google.maps.places.Autocomplete(destinationInput);
+
+  placeChange(map, originAutocomplete, "ORIG");
+  placeChange(map, destinationAutocomplete, "DEST")
 }
 
-function onMapClick(e){
-  const coords = [e.latlng.lat, e.latlng.lng];
+function placeChange(map, autocomplete, mode){
+  autocomplete.bindTo("bounds", map);
+  autocomplete.addListener("place_changed", () => {
+    const place = autocomplete.getPlace();
+    if (!place.place_id) {
+      window.alert("Please select an option from the dropdown list.");
+      return;
+    }
 
-  if(marker != undefined) {
-    map.removeLayer(marker);
-  }
-  marker = L.marker(coords).addTo(map)
-            .bindPopup('¡You select this place!')
-            .openPopup();
+    if (mode === "ORIG") {
+      originPlaceId = place.place_id;
+    } else {
+      destinationPlaceId = place.place_id;
+    }
+
+    drawRoute(originPlaceId, destinationPlaceId);
+  })
+}
+
+function drawRoute(){
+  if (!originPlaceId || !destinationPlaceId) return;
+
+  directionsService.route(
+    {
+      origin: { placeId: originPlaceId },
+      destination: { placeId: destinationPlaceId },
+      travelMode: "DRIVING",
+    },
+    (response, status) => {
+      if (status === "OK") {
+        directionsRenderer.setDirections(response);
+      } else {
+        window.alert("Directions request failed due to " + status);
+      }
+    }
+  )
 }

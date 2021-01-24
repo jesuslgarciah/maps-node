@@ -1,8 +1,10 @@
 const express = require("express");
 const router = express.Router();
 
+const config = require("../config/config");
+
 router.get('/', async (req, res, next) => {
-  res.render("index");
+  res.render("index", { API_KEY: config.app.api_key});
 });
 
 router.post('/', async (req, res, next) => {
