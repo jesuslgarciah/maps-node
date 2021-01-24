@@ -1,13 +1,13 @@
-html
+html(lang="eng")
   head
     title Prueba
     link(rel="stylesheet", href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css")
     link(rel="stylesheet", href="/css/style.css")
   body
-    form(id="form" action="/", method="post")
-      input(type="text" id="coordInit" required)
-      input(type="text" id="coordEnd" required)
-      input(type="submit")
-    div(id="map")
-    script(defer src=`https://maps.googleapis.com/maps/api/js?key=${API_KEY}&callback=initMap`)
+    div(class="container")
+      div(class="none")
+        input(type="text" id="origin-input" placeholder="Enter an origin address" autocomplete="off")
+        input(type="text" id="destination-input" placeholder="Enter a destination address" autocomplete="off")
+      div(id="map")
+    script(defer src=`https://maps.googleapis.com/maps/api/js?key=${API_KEY}&callback=initMap&libraries=places`)
     script(src="/js/script.js")
